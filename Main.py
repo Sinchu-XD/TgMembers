@@ -4,7 +4,6 @@ from telethon.tl.functions.messages import AddChatUserRequest
 import asyncio
 import random
 import logging
-from config import api_id, api_hash, bot_token, phone_number, source_group, target_group
 from telethon import TelegramClient
 from telethon.sessions import StringSession
 
