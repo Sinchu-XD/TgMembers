@@ -12,11 +12,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 api_id = 6067591
-api_hash = 94e17044c2393f43fda31d3afe77b26b
+api_hash = "94e17044c2393f43fda31d3afe77b26b"
 
 client = TelegramClient('scraper_session', api_id, api_hash)
 
-bot_token = 7758255754:AAH0wvr7nwSzEDq49UxhDi0hv0oVQvuRe_s
+bot_token = "7758255754:AAH0wvr7nwSzEDq49UxhDi0hv0oVQvuRe_s"
 phone_number = None
 source_group = None
 target_group = None
