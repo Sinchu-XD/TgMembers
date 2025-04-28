@@ -26,10 +26,10 @@ members_added = 0
 async def start_login(phone_number):
     global logged_in, user_phone
 
-    if not phone:
+    if not phone_number:
         return
 
-    user_phone = phone
+    user_phone = phone_number
     await client.connect()
 
     if not await client.is_user_authorized():
@@ -46,7 +46,6 @@ async def start(event):
         return
 
     await event.respond("Please enter your phone number (in international format, e.g., +1234567890):")
-    await event.reply('Waiting for phone number input...')
 
 
 @client.on(events.NewMessage())
@@ -142,15 +141,15 @@ async def add_member_with_delay(participant, target_group_entity, event):
         logger.info(f"Added member {participant.id} to the target group. Total added: {members_added}")
 
         if members_added >= 150:
-            wait_time = 3600
+            wait_time = 3600  # 1 hour
             logger.info(f"Flood limit reached. Waiting for {wait_time/60} minutes.")
             await asyncio.sleep(wait_time)
         elif members_added >= 30:
-            wait_time = 600
+            wait_time = 600  # 10 minutes
             logger.info(f"Flood limit reached. Waiting for {wait_time/60} minutes.")
             await asyncio.sleep(wait_time)
         else:
-            wait_time = random.uniform(30, 90)
+            wait_time = random.uniform(30, 90)  # Random delay
             logger.info(f"Waiting for {wait_time:.2f} seconds before adding the next member.")
             await asyncio.sleep(wait_time)
 
@@ -194,4 +193,4 @@ async def start_bot():
 
 if __name__ == '__main__':
     asyncio.run(start_bot())
-  
+    
