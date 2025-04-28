@@ -4,7 +4,6 @@ from telethon.tl.functions.messages import AddChatUserRequest
 import asyncio
 import random
 import logging
-from telethon import TelegramClient
 from telethon.sessions import StringSession
 
 logging.basicConfig(level=logging.INFO)
@@ -16,7 +15,6 @@ api_hash = "94e17044c2393f43fda31d3afe77b26b"
 client = TelegramClient('scraper_session', api_id, api_hash)
 
 bot_token = "7758255754:AAH0wvr7nwSzEDq49UxhDi0hv0oVQvuRe_s"
-phone_number = None
 source_group = None
 target_group = None
 logged_in = False
@@ -36,69 +34,6 @@ async def start_login(phone_number):
         await client.send_code_request(user_phone)
         logged_in = False
         logger.info("OTP sent. Waiting for code...")
-
-
-@client.on(events.NewMessage(pattern='/login'))
-async def start(event):
-    global logged_in
-    if logged_in:
-        await event.respond("You are already logged in.")
-        return
-
-    await event.respond("Please enter your phone number (in international format, e.g., +1234567890):")
-
-
-@client.on(events.NewMessage())
-async def handle_phone_number(event):
-    global logged_in, user_phone
-
-    if logged_in:
-        return
-
-    phone = event.message.text
-
-    if phone.startswith("+") and len(phone) > 9:
-        await start_login(phone)
-        await event.respond(f"OTP has been sent to {phone}. Please enter the OTP:")
-    else:
-        await event.respond("Invalid phone number format. Please enter again.")
-
-
-@client.on(events.NewMessage())
-async def handle_otp(event):
-    global logged_in, user_phone
-    otp = event.message.text
-
-    if logged_in:
-        return
-
-    try:
-        await client.sign_in(user_phone, otp)
-        logged_in = True
-        await event.respond("Login successful!")
-    except SessionPasswordNeededError:
-        await event.respond("2FA is enabled. Please enter the 2FA password:")
-    except Exception as e:
-        await event.respond(f"Failed to log in: {str(e)}")
-        logger.error(f"Failed to log in: {str(e)}")
-
-
-@client.on(events.NewMessage())
-async def handle_2fa(event):
-    global logged_in
-
-    password = event.message.text
-
-    if logged_in:
-        return
-
-    try:
-        await client.sign_in(password=password)
-        logged_in = True
-        await event.respond("2FA successful. You are now logged in!")
-    except Exception as e:
-        await event.respond(f"Failed to log in with 2FA: {str(e)}")
-        logger.error(f"Failed to log in with 2FA: {str(e)}")
 
 
 @client.on(events.NewMessage(pattern='/setsource'))
@@ -143,15 +78,15 @@ async def add_member_with_delay(participant, target_group_entity, event):
         logger.info(f"Added member {participant.id} to the target group. Total added: {members_added}")
 
         if members_added >= 150:
-            wait_time = 3600  # 1 hour
+            wait_time = 3600
             logger.info(f"Flood limit reached. Waiting for {wait_time/60} minutes.")
             await asyncio.sleep(wait_time)
         elif members_added >= 30:
-            wait_time = 600  # 10 minutes
+            wait_time = 600
             logger.info(f"Flood limit reached. Waiting for {wait_time/60} minutes.")
             await asyncio.sleep(wait_time)
         else:
-            wait_time = random.uniform(30, 90)  # Random delay
+            wait_time = random.uniform(30, 90)
             logger.info(f"Waiting for {wait_time:.2f} seconds before adding the next member.")
             await asyncio.sleep(wait_time)
 
