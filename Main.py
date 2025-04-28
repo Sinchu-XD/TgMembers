@@ -85,6 +85,8 @@ async def handle_otp(event):
 
 @client.on(events.NewMessage())
 async def handle_2fa(event):
+    global logged_in
+
     password = event.message.text
 
     if logged_in:
